@@ -3,6 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: pod-security-admission-disallow-privileged
 spec:
+  validationFailureAction: enforce
   rules:
     - validate:
         pattern:
@@ -21,5 +22,8 @@ spec:
         resources:
           kinds:
             - Pod
+          namespaces:
+            - "test"
       name: pod-security-admission-disallow-privileged
-  validationFailureAction: enforce
+
+  

@@ -33,11 +33,13 @@ kubectl apply -k .
 NAME                    STATUS   AGE     LABELS
 test                    Active   41s     kubernetes.io/metadata.name=test,pod-security.kubernetes.io/enforce-version=v1.24,pod-security.kubernetes.io/enforce=baseline
 ```
-3. `kubectl apply -f nginx_privileged.yaml -n test`
+
+3. `kubectl apply -f nginx_privileged.yaml`: the pod is created because PSA only checks pod creation in `test` namespace
+4. `kubectl apply -f nginx_privileged.yaml -n test`: error because it matches Kyverno statement
 ```
 Error from server (Forbidden): error when creating "nginx_privileged.yaml": pods "nginx" is forbidden: violates PodSecurity "baseline:v1.24": privileged (container "nginx" must not set securityContext.privileged=true)
 ```
-4. `kubectl delete ns test`
+5. `kubectl delete ns test`
 
 #### Kyverno
 
@@ -47,7 +49,8 @@ Error from server (Forbidden): error when creating "nginx_privileged.yaml": pods
 NAME                                         BACKGROUND   ACTION    READY
 pod-security-admission-disallow-privileged   true         enforce   true
 ```
-3. `kubectl apply -f nginx_privileged.yaml`
+3. `kubectl apply -f nginx_privileged.yaml`: the pod is created because Kyverno policy only checks for pod in `test` namespace
+4. `kubectl apply -f nginx_privileged.yaml -n test`: error because it matches Kyverno statement
 ```
 Error from server: error when creating "nginx_privileged.yaml": admission webhook "validate.kyverno.svc-fail" denied the request:
 
@@ -58,3 +61,4 @@ pod-security-admission-disallow-privileged:
     your pod as privileged. Rule pod-security-admission-disallow-privileged failed
     at path /spec/containers/0/securityContext/privileged/'
 ```
+5. `kubectl delete cpol --all`
