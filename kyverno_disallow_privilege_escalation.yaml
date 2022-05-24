@@ -1,0 +1,25 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: psp-privileged-af09a
+spec:
+  rules:
+    - validate:
+        pattern:
+          spec:
+            "=(initContainers)":
+              - "=(securityContext)":
+                  "=(privileged)": false
+            "=(ephemeralContainers)":
+              - "=(securityContext)":
+                  "=(privileged)": false
+            containers:
+              - "=(securityContext)":
+                  "=(privileged)": false
+        message: Rejected by psp-privileged-0 rule
+      match:
+        resources:
+          kinds:
+            - Pod
+      name: psp-privileged-0
+  validationFailureAction: enforce
