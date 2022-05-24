@@ -21,9 +21,11 @@ make certs
 kubectl apply -k .
 ```
 
-## Difference: PodSecurity admission controller vs Kyverno
+## Comparison: Pod Security Admission vs Kyverno
 
 ### Enforce baseline PodSecurity
+
+#### Pod Security Admission
 
 1. `kubectl apply -f psa_enforce_baseline_test_namespace.yaml`
 2. `kubectl get ns --show-labels`
@@ -34,4 +36,25 @@ test                    Active   41s     kubernetes.io/metadata.name=test,pod-se
 3. `kubectl apply -f nginx_privileged.yaml -n test`
 ```
 Error from server (Forbidden): error when creating "nginx_privileged.yaml": pods "nginx" is forbidden: violates PodSecurity "baseline:v1.24": privileged (container "nginx" must not set securityContext.privileged=true)
+```
+4. `kubectl delete ns test`
+
+#### Kyverno
+
+1. `kubectl apply -f kyverno_disallow_privileged.yaml`
+2. `kubectl get cpol`
+```
+NAME                                         BACKGROUND   ACTION    READY
+pod-security-admission-disallow-privileged   true         enforce   true
+```
+3. `kubectl apply -f nginx_privileged.yaml`
+```
+Error from server: error when creating "nginx_privileged.yaml": admission webhook "validate.kyverno.svc-fail" denied the request:
+
+resource Pod/default/nginx was blocked due to the following policies
+
+pod-security-admission-disallow-privileged:
+  pod-security-admission-disallow-privileged: 'validation error: You should not run
+    your pod as privileged. Rule pod-security-admission-disallow-privileged failed
+    at path /spec/containers/0/securityContext/privileged/'
 ```
