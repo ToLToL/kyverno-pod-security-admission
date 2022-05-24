@@ -21,6 +21,14 @@ make certs
 kubectl apply -k .
 ```
 
+4. install Kyverno with helm
+
+```
+helm repo add kyverno https://kyverno.github.io/kyverno/
+helm repo update
+helm install kyverno kyverno/kyverno --namespace kyverno --create-namespace
+```
+
 # Comparison: Pod Security Admission vs Kyverno
 
 ## Validation modes
