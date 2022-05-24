@@ -100,7 +100,7 @@ test                    Active   7s    kubernetes.io/metadata.name=test,pod-secu
 ```
 
 3. `kubectl apply -f nginx_privileged.yaml`: the pod is created, no error message
-4. `k get events`: policy violations to an `audit` mode will trigger the addition of an audit annotation to the event recorded in the audit log
+4. `kubectl get events`: policy violations to an `audit` mode will trigger the addition of an audit annotation to the event recorded in the audit log
 ```
 LAST SEEN   TYPE      REASON             OBJECT                                                  MESSAGE
 pod-security-admission-audit-privileged   rules '[pod-security-admission-audit-privileged]' not satisfied on resource 'Pod/test/nginx'
