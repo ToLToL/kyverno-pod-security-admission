@@ -1,7 +1,7 @@
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: psp-privileged-af09a
+  name: pod-security-admission-disallow-privileged
 spec:
   rules:
     - validate:
@@ -16,10 +16,10 @@ spec:
             containers:
               - "=(securityContext)":
                   "=(privileged)": false
-        message: Rejected by psp-privileged-0 rule
+        message: You should not run your pod as privileged
       match:
         resources:
           kinds:
             - Pod
-      name: psp-privileged-0
+      name: pod-security-admission-disallow-privileged
   validationFailureAction: enforce

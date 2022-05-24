@@ -1,0 +1,25 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: pod-security-admission-audit-privileged
+spec:
+  rules:
+    - validate:
+        pattern:
+          spec:
+            "=(initContainers)":
+              - "=(securityContext)":
+                  "=(privileged)": false
+            "=(ephemeralContainers)":
+              - "=(securityContext)":
+                  "=(privileged)": false
+            containers:
+              - "=(securityContext)":
+                  "=(privileged)": false
+        message: Pod will be created but you should not run it as privileged
+      match:
+        resources:
+          kinds:
+            - Pod
+      name: pod-security-admission-audit-privileged
+  validationFailureAction: audit
